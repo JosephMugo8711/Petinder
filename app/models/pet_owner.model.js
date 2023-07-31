@@ -1,16 +1,20 @@
 const mongoose = require("mongoose");
 
-const PetOwner = mongoose.model(
-  "PetOwner",
-  new mongoose.Schema({
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    profileImage: String,
-    contact: String,
-    location: String,
-  })
-);
+const PetOwnerSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  profileImage: String,
+  contact: String,
+  location: String,
+  pets: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Pet",
+  }],
+});
+
+const PetOwner = mongoose.model("PetOwner", PetOwnerSchema);
 
 module.exports = PetOwner;
+

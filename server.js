@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
+const cookieParser = require("cookie-parser"); // Add this line
 const mongoose = require("mongoose");
 
 const app = express();
@@ -11,6 +12,7 @@ var corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser()); 
 app.use(
   cookieSession({
     name: "petinder-session",
@@ -38,20 +40,23 @@ mongoose
     process.exit();
   });
 
-async function initial() {
-  try {
-    const count = await Role.estimatedDocumentCount();
-    if (count === 0) {
-      await new Role({ name: "user" }).save();
-      await new Role({ name: "service provider" }).save();
-      await new Role({ name: "pet owner" }).save();
-      await new Role({ name: "admin" }).save();
-      console.log("Roles initialized successfully!");
+  async function initial() {
+    try {
+      const count = await Role.estimatedDocumentCount();
+      if (count === 0) {
+        await new Role({ name: "user" }).save();
+        await new Role({ name: "service provider" }).save();
+        await new Role({ name: "pet owner" }).save();
+        await new Role({ name: "admin" }).save();
+        console.log("Roles initialized successfully!");
+      } else {
+        console.log("Roles already initialized.");
+      }
+    } catch (err) {
+      console.error("Error initializing roles:", err);
     }
-  } catch (err) {
-    console.error("Error initializing roles:", err);
   }
-}
+  
 
 // Importing authentication and user routes
 const authRoutes = require("./app/routes/auth.routes");
