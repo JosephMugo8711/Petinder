@@ -5,7 +5,7 @@ const User = db.user;
 const Role = db.role;
 
 verifyToken = (req, res, next) => {
-  let token = req.cookies.bezkoder_session; // Assuming you use cookie-session to store the token
+  let token = req.cookies.petinder_session; 
 
   if (!token) {
     return res.status(403).send({ message: "No token provided!" });
