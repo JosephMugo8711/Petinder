@@ -1,81 +1,71 @@
-const express = require("express")
-const cors = require("cors")
-
-const cookieSession = require("cookie-session")
+const express = require("express");
+const cors = require("cors");
+const cookieSession = require("cookie-session");
+const cookieParser = require("cookie-parser"); // Add this line
+const mongoose = require("mongoose");
 
 const app = express();
-
 var corsOptions = {
-    origin: "http://localhost:8081"
+  origin: "http://localhost:8081",
 };
 
 app.use(cors(corsOptions));
-
-// parse requests of content-type - application/json
 app.use(express.json());
-
-// parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cookieParser()); 
 app.use(
   cookieSession({
-    name: "bezkoder-session",
-    keys: ["COOKIE_SECRET"], // should use as secret environment variable
-    httpOnly: true
+    name: "petinder-session",
+    keys: ["COOKIE_SECRET"],
+    httpOnly: true,
   })
 );
+
+// MongoDB connection and initialization code
+const dbConfig = require("./app/config/db.config.js");
 const db = require("./app/models");
 const Role = db.role;
 
-db.mongoose
+mongoose
   .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   })
   .then(() => {
     console.log("Successfully connect to MongoDB.");
     initial();
   })
-  .catch(err => {
+  .catch((err) => {
     console.error("Connection error", err);
     process.exit();
   });
 
-function initial() {
-  Role.estimatedDocumentCount((err, count) => {
-    if (!err && count === 0) {
-      new Role({
-        name: "user"
-      }).save(err => {
-        if (err) {
-          console.log("error", err);
-        }
-
-        console.log("added 'user' to roles collection");
-      });
-
-      new Role({
-        name: "moderator"
-      }).save(err => {
-        if (err) {
-          console.log("error", err);
-        }
-
-        console.log("added 'moderator' to roles collection");
-      });
-
-      new Role({
-        name: "admin"
-      }).save(err => {
-        if (err) {
-          console.log("error", err);
-        }
-
-        console.log("added 'admin' to roles collection");
-      });
+  async function initial() {
+    try {
+      const count = await Role.estimatedDocumentCount();
+      if (count === 0) {
+        await new Role({ name: "user" }).save();
+        await new Role({ name: "service provider" }).save();
+        await new Role({ name: "pet owner" }).save();
+        await new Role({ name: "admin" }).save();
+        console.log("Roles initialized successfully!");
+      } else {
+        console.log("Roles already initialized.");
+      }
+    } catch (err) {
+      console.error("Error initializing roles:", err);
     }
-  });
-}
+  }
+  
+
+// Importing authentication and user routes
+const authRoutes = require("./app/routes/auth.routes");
+const userRoutes = require("./app/routes/user.routes");
+
+// Adding authentication and user routes to the app
+app.use(authRoutes);
+app.use(userRoutes);
+
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to petinder application." });
@@ -88,10 +78,4 @@ app.listen(PORT, () => {
 });
 
 
-
-// PORT=3000
-// ENV= development
-// DB_HOST=localhost
-// DB_PORT=27017
-// DB_NAME=petinderdb
 
