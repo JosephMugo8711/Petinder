@@ -56,8 +56,12 @@ https://dbdiagram.io/d/64a9733b02bd1c4a5eb8e3be
 - yarn
 *****
 ## Technologies Used
-1. Javascript
-2. Nodejs
+1. Express 4.18.2
+2. cookie-session 2.0.0
+3. bcryptjs 2.4.3
+4. jsonwebtoken 9.0.0
+5. mongoose 6.11.2
+6. MongoDB
 *****
 ## Contact Information
 * Email : 
