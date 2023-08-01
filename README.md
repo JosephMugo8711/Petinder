@@ -8,6 +8,8 @@ Our platform provides a centralized and user-friendly solution, connecting pet o
 ******
 ## DBDIAGRAM
 
+![petinderdbdiagram](https://github.com/JosephWamiti1178/Petinder/assets/91910681/f9c4daf0-de59-41d1-a7c4-e43712e4b35c)
+
 https://dbdiagram.io/d/64a9733b02bd1c4a5eb8e3be
 ********
 
